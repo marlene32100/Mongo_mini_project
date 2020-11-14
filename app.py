@@ -61,7 +61,8 @@ def login():
             if check_password_hash(
                 existing_user["password"], request.form.get("password")):
                     session["user"] = request.form.get("username").lower()
-                    flash("Welcome, {}".format(request.form.get("username").capitalize()))
+                    flash("Welcome, {}".format(
+                        request.form.get("username").capitalize()))
                     return redirect(
                         url_for("profile", username=session["user"]))
             else:
@@ -93,7 +94,6 @@ def profile(username):
 
     if session["user"]:
         return render_template("profile.html", username=username)
-    
     return redirect(url_for("login"))
 
 
@@ -114,6 +114,14 @@ def add_task():
         return redirect(url_for("get_tasks"))
     categories = mongo.db.categories.find().sort("category_name", 1)
     return render_template("add_task.html", categories=categories)
+
+
+@app.route("/edit_task<task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
+    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("edit_task.html", task=task, categories=categories)
 
 
 if __name__ == "__main__":
