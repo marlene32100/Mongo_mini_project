@@ -137,7 +137,7 @@ def edit_task(task_id):
 
 
 
-@app.route("/delete_task<task_id>")
+@app.route("/delete_task/<task_id>")
 def delete_task(task_id):
     mongo.db.tasks.remove({"_id": ObjectId(task_id)})
     flash("Task successfully deleted")
@@ -175,6 +175,13 @@ def edit_category(category_id):
 
     category = mongo.db.categories.find_one({"_id": ObjectId(category_id)})
     return render_template("edit_category.html", category=category)
+
+
+@app.route("/delete_category/<category_id>")
+def delete_category(category_id):
+    mongo.db.categories.remove({"_id": ObjectId(category_id)})
+    flash("Category successfully deleted")
+    return redirect(url_for("get_categories"))
 
 
 if __name__ == "__main__":
