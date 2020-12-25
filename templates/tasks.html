@@ -20,6 +20,8 @@
 	</form>
 </div>
 
+
+
 {% if tasks|length > 0 %}
 <ul class="collapsible popout">
     {% for task in tasks %}
@@ -56,5 +58,7 @@
 {% else %}
 <h3 class="red-text text-darken-4 center-align">No results found</h3>
 {% endif %}
+
+{{ pagination.links }}
 
 {% endblock %}

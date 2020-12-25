@@ -19,10 +19,34 @@ app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
 
 
+def get_results(offset=0, per_page=2):
+    return tasks[offset: offset + per_page]
+
+
 @app.route("/")
 def get_tasks():
-    tasks = list(mongo.db.tasks.find())
-    return render_template("tasks.html", tasks=tasks)
+
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+
+    per_page = 3
+
+    offset = page * per_page - per_page
+
+    total = mongo.db.tasks.find().count()
+
+    tasks = list(mongo.db.tasks.find().sort('_id', -1))
+
+    pagination_tasks = tasks[offset: offset + per_page]
+
+    pagination = Pagination(page=page, per_page=per_page, offset=offset, total=total,
+                            css_framework='bootstrap4')
+
+    return render_template("tasks.html",
+                           tasks=pagination_tasks,
+                           page=page,
+                           per_page=per_page,
+                           pagination=pagination,)
 
 
 @app.route("/search", methods=["GET", "POST"])
